@@ -33,7 +33,7 @@ zaragoza <- st_transform(zaragoza, 25830)
 url <- "https://data-emf.creaf.cat/public/spatial_examples/exercise_4_2/" 
 dias <- sprintf("202504%02d.gpkg", 1:10)          # Días que seleccionamos. Del 1 al 10, en este caso.
 
-dest_folder <- "raw_data"                           # Carpeta de destino
+dest_folder <- "../raw_data"                           # Carpeta de destino
 
 # Generamos un bucle para la descarga
 for (dia in dias) {
@@ -53,12 +53,12 @@ zaragoza_wkt <- sf::st_as_text(sf::st_geometry(zaragoza))
 
 # Obtenemos los nombres de las columnas, para poder seleccionar las que nos interesan: MeanTemperature, Precipitation &
 # MeanRelativeHumidity
-datos <- sf::read_sf("raw_data/20250401.gpkg", layer = "20250401")
+datos <- sf::read_sf("../raw_data/20250401.gpkg", layer = "20250401")
 head(datos)
 
 # Preparamos la lista de archivos para procesar
 
-data_folder <- "raw_data"
+data_folder <- "../raw_data"
 archivos <- list.files(data_folder, pattern = "\\.gpkg$", full.names = TRUE)
 
 # 5. Configuramos paralelizacion
@@ -102,6 +102,7 @@ procesar_archivo <- function(archivo) {
 resultados <- future_map_dfr(archivos, procesar_archivo, .options = furrr_options(seed = TRUE))
 
 print(resultados)
+plot(resultados)
 
 # 8. Guardamos el resultado en un archivo .csv
-write.csv(resultados, "data/daily_averages_zaragoza_geom.csv", row.names = FALSE)
+write.csv(resultados, "../data/daily_averages_zaragoza_geom.csv", row.names = FALSE)
